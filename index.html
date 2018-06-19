@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My own chat</title>
+</head>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font: 13px Helvetica, Arial;
+    }
+
+    .outer {
+        position: relative;
+        width: 300px;
+        height: 520px;
+
+    }
+
+    #chatHolder {
+        width: 300px;
+        height: 500px;
+        max-height: 500px;
+
+        background-color: #eeeeee;
+        overflow: scroll;
+    }
+
+    form {
+        background: #000;
+        padding: 3px;
+        position: absolute;
+        bottom: 0px;
+        width: 100%;
+
+    }
+
+    form input {
+        border: 0;
+        padding: 10px;
+        width: 85%;
+        margin-right: .5%;
+    }
+
+    form button:hover {
+        background-color: mediumslateblue;
+    }
+
+    form button {
+        width: 13%;
+        background: rgb(130, 224, 255);
+        border: none;
+        padding: 10px 2px;
+    }
+
+    #messages {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+        overflow: auto;
+    }
+
+    #messages li {
+        padding: 5px 10px;
+        overflow: auto;
+    }
+
+    #messages li:nth-child(odd) {
+        background: #eee;
+    }
+</style>
+
+<body>
+<h1>Chat window</h1>
+<div class="outer">
+    <div id="chatHolder">
+        <ul id="messages"></ul>
+        <form id="messagesForm" action="">
+            <input id="messageInputField" autocomplete="off"/>
+            <button id="messagesFormSbm">Send</button>
+        </form>
+    </div>
+</div>
+
+
+</body>
+
+<!--Это единственное, что требуется для загрузки клиентской части socket.io,
+мы создаем глобальную переменную, после чего подключаемся.
+Обратите внимание, что я не указываю никакого адреса (URL) когда подключаю
+библиотеку и вызываю io(), так как по умолчанию он пытается загрузить
+библиотеку с того сервера, который вернул ему эту страницу.-->
+<script src="/socket.io/socket.io.js"></script>
+<!--<script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>-->
+<script src="//code.jquery.com/jquery-1.11.1.js"></script>
+<script>
+    const messageInputField = document.querySelector('#messageInputField');
+    const messages = document.querySelector('#messages');
+
+    var socket = io();
+    $('form').submit(function () {
+        /*        socket.emit('chat message', $('#messageInputField').val());
+                $('#messageInputField').val('');*/
+        socket.emit('chat message', messageInputField.value.trim());
+        messageInputField.value = "";
+        return false;
+    });
+
+        socket.on('chat message', function (msg) {
+            //$('#messages').append($('<li>').text(msg));
+            messages.insertAdjacentHTML('beforeend', `<li>${msg}</li>`)
+
+        });
+
+
+</script>
+
+</html>
