@@ -73,6 +73,26 @@
     #messages li:nth-child(odd) {
         background: #eee;
     }
+
+    .addUserForm {
+        width: 300px;
+        margin: 20px;
+        background-color: #eeeeee;
+        margin: 0;
+        padding: 10px 2px;
+    }
+
+    .addUserFormInput {
+        width: 200px;
+        height: 30px;
+    }
+
+    .addUserFormSbm {
+        padding: 3px;
+        width: 90px;
+    }
+
+
 </style>
 
 <body>
@@ -85,6 +105,10 @@
             <button id="messagesFormSbm">Send</button>
         </form>
     </div>
+</div>
+<div class="addUserForm">
+    <input type="text" class="addUserFormInput" placeholder="enter your name">
+    <button class="addUserFormSbm">Submit</button>
 </div>
 
 
@@ -101,6 +125,9 @@
 <script>
     const messageInputField = document.querySelector('#messageInputField');
     const messages = document.querySelector('#messages');
+    const userNameInputField = document.querySelector('.addUserFormInput');
+    const addUserFormSbm = document.querySelector('.addUserFormSbm');
+    let username;
 
     var socket = io();
     $('form').submit(function () {
@@ -111,11 +138,34 @@
         return false;
     });
 
-        socket.on('chat message', function (msg) {
-            //$('#messages').append($('<li>').text(msg));
-            messages.insertAdjacentHTML('beforeend', `<li>${msg}</li>`)
+    /*        socket.on('chat message', function (msg) {
+                //$('#messages').append($('<li>').text(msg));
+                messages.insertAdjacentHTML('beforeend', `<li>${msg}</li>`)
 
-        });
+            });*/
+
+    socket.on('chat message', data => {
+        //$('#messages').append($('<li>').text(msg));
+        messages.insertAdjacentHTML('beforeend', `<li>${data.username}: ${data.message}</li>`)
+
+    });
+
+
+    addUserFormSbm.addEventListener('click', function () {
+        username = userNameInputField.value.trim();
+        console.log(username + '- username');
+        socket.emit('add user', username)
+        document.querySelector('.addUserForm').remove();
+    })
+
+
+    /*
+        addUserFormSbm.addEventListener('click', function () {
+            username = userNameInputField.value.trim();
+            console.log(username + '- username');
+            socket.emit('add user', username)
+        })
+    */
 
 
 </script>

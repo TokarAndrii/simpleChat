@@ -23,9 +23,19 @@ io.on('connection', function (socket) {
     console.log('a user connected');
     var addedUser = false;
 
-    socket.on('chat message', function (msg) {
+/*    socket.on('chat message', function (msg) {
         io.emit('chat message', msg);
+    });*/
+
+    // when the client emits 'new message', this listens and executes
+    socket.on('chat message', (data) => {
+        // we tell the client to execute 'new message'
+        io.emit('chat message', {
+            username: socket.username,
+            message: data
+        });
     });
+
 
     socket.on('disconnect', function () {
         console.log('a user disconnected');
